@@ -1,0 +1,120 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "nodebb-plugin-sso-vk-test@2.0.18",
+        "scope": null,
+        "escapedName": "nodebb-plugin-sso-vk-test",
+        "name": "nodebb-plugin-sso-vk-test",
+        "rawSpec": "2.0.18",
+        "spec": "2.0.18",
+        "type": "version"
+      },
+      "/home/user/nodebb"
+    ],
+    [
+      {
+        "raw": "nodebb-plugin-sso-vk-test@2.0.18",
+        "scope": null,
+        "escapedName": "nodebb-plugin-sso-vk-test",
+        "name": "nodebb-plugin-sso-vk-test",
+        "rawSpec": "2.0.18",
+        "spec": "2.0.18",
+        "type": "version"
+      },
+      "/home/user/nodebb"
+    ],
+    [
+      {
+        "raw": "nodebb-plugin-sso-vk-test@2.0.18",
+        "scope": null,
+        "escapedName": "nodebb-plugin-sso-vk-test",
+        "name": "nodebb-plugin-sso-vk-test",
+        "rawSpec": "2.0.18",
+        "spec": "2.0.18",
+        "type": "version"
+      },
+      "/home/user/nodebb"
+    ]
+  ],
+  "_from": "nodebb-plugin-sso-vk-test@2.0.18",
+  "_id": "nodebb-plugin-sso-vk-test@2.0.18",
+  "_inCache": true,
+  "_location": "/nodebb-plugin-sso-vk-test",
+  "_nodeVersion": "6.11.1",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/nodebb-plugin-sso-vk-test_2.0.18_1525534416005_0.7806062890586236"
+  },
+  "_npmUser": {
+    "name": "dreadfull",
+    "email": "deathwings9@gmail.com"
+  },
+  "_npmVersion": "3.10.10",
+  "_phantomChildren": {
+    "oauth": "0.9.15",
+    "passport-strategy": "1.0.0",
+    "uid2": "0.0.3"
+  },
+  "_requested": {
+    "raw": "nodebb-plugin-sso-vk-test@2.0.18",
+    "scope": null,
+    "escapedName": "nodebb-plugin-sso-vk-test",
+    "name": "nodebb-plugin-sso-vk-test",
+    "rawSpec": "2.0.18",
+    "spec": "2.0.18",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/nodebb-plugin-sso-vk-test/-/nodebb-plugin-sso-vk-test-2.0.18.tgz",
+  "_shasum": "67b1d3020779356d94602607249abbf61b6b2c0b",
+  "_shrinkwrap": null,
+  "_spec": "nodebb-plugin-sso-vk-test@2.0.18",
+  "_where": "/home/user/nodebb",
+  "author": {
+    "name": "dreadfull",
+    "email": "deathwings9@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/Serhey/nodebb-plugin-sso-vk-test/issues"
+  },
+  "dependencies": {
+    "passport-vkontakte": "^1.0.0"
+  },
+  "description": "NodeBB vkontakte SSO",
+  "devDependencies": {},
+  "directories": {},
+  "homepage": "https://github.com/Serhey/nodebb-plugin-sso-vk-test",
+  "keywords": [
+    "nodebb",
+    "plugin",
+    "vkontakte",
+    "sso",
+    "single sign on",
+    "registration"
+  ],
+  "license": "MIT",
+  "main": "library.js",
+  "maintainers": [
+    {
+      "name": "dreadfull",
+      "email": "deathwings9@gmail.com"
+    }
+  ],
+  "name": "nodebb-plugin-sso-vk-test",
+  "nbbpm": {
+    "compatibility": "^1.6.0"
+  },
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Serhey/nodebb-plugin-sso-vk-test.git"
+  },
+  "scripts": {},
+  "version": "2.0.18"
+}
+

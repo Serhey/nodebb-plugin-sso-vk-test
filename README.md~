@@ -4,7 +4,7 @@ NodeBB Plugin that allows users to login/register via their Vkontakte account.
 
 ## Installation
 
-    npm install nodebb-plugin-sso-vk-test
+    npm install nodebb-plugin-sso-vkontakte-test
     
 ## Configuration
  
