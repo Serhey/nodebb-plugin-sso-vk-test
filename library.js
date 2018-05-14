@@ -14,7 +14,7 @@
 		'name': "Vkontakte",
 		'admin': {
 			'icon': 'fa-vk',
-			'route': '/plugins/sso-vk-test'
+			'route': '/plugins/sso-vkontakte'
 		}
 	});
 
@@ -24,7 +24,7 @@
 
 	Vkontakte.preinit = function(data, callback) {
 		// Settings
-		meta.settings.get('sso-vk-test', function(err, settings) {
+		meta.settings.get('sso-vkontakte', function(err, settings) {
 			Vkontakte.settings = settings;
 			callback(null, data);
 		});
@@ -32,17 +32,17 @@
 
 	Vkontakte.init = function(data, callback) {
 		function render(req, res, next) {
-			res.render('admin/plugins/sso-vk-test', {});
+			res.render('admin/plugins/sso-vkontakte', {});
 		}
 
-		data.router.get('/admin/plugins/sso-vk-test', data.middleware.admin.buildHeader, render);
-		data.router.get('/api/admin/plugins/sso-vk-test', render);
+		data.router.get('/admin/plugins/sso-vkontakte', data.middleware.admin.buildHeader, render);
+		data.router.get('/api/admin/plugins/sso-vkontakte', render);
 
 		callback();
 	};
 
 	Vkontakte.getStrategy = function(strategies, callback) {
-		meta.settings.get('sso-vk-test', function(err, settings) {
+		meta.settings.get('sso-vkontakte', function(err, settings) {
 			if (!err && settings.id && settings.secret) {
 				passport.use(new passportVK({
 					clientID: settings.id,
@@ -75,7 +75,7 @@
 		//console.log('our email!!!!!!');
 		//console.log(email);
 		if (!email) {
-			email = username + '@users.noreply.vk.com';
+			email = username + '@users.noreply.vkontakte.com';
 		}
 
 		Vkontakte.getUidByvkontakteID(vkontakteID, function(err, uid) {
@@ -92,8 +92,8 @@
 				// New User
 				var success = function(uid) {
 					// Save vkontakte-specific information to the user
-					User.setUserField(uid, 'vkid', vkontakteID);
-					db.setObjectField('vkeid:uid', vkontakteID, uid);
+					User.setUserField(uid, 'vkontakteid', vkontakteID);
+					db.setObjectField('vkontakteid:uid', vkontakteID, uid);
 					var autoConfirm = Vkontakte.settings && Vkontakte.settings.autoconfirm === "on" ? 1: 0;
 					User.setUserField(uid, 'email:confirmed', autoConfirm);
 
@@ -130,7 +130,7 @@
 	};
 
 	Vkontakte.getUidByvkontakteID = function(vkontakteID, callback) {
-		db.getObjectField('vkid:uid', vkontakteID, function(err, uid) {
+		db.getObjectField('vkontakteid:uid', vkontakteID, function(err, uid) {
 			if (err) {
 				callback(err);
 			} else {
@@ -151,13 +151,13 @@
 
 	Vkontakte.deleteUserData = function(uid, callback) {
 		async.waterfall([
-			async.apply(User.getUserField, uid, 'vkid'),
+			async.apply(User.getUserField, uid, 'vkontakteid'),
 			function(oAuthIdToDelete, next) {
-				db.deleteObjectField('vkid:uid', oAuthIdToDelete, next);
+				db.deleteObjectField('vkontakteid:uid', oAuthIdToDelete, next);
 			}
 		], function(err) {
 			if (err) {
-				winston.error('[sso-vk-test] Could not remove OAuthId data for uid ' + uid + '. Error: ' + err);
+				winston.error('[sso-vkontakte] Could not remove OAuthId data for uid ' + uid + '. Error: ' + err);
 				return callback(err);
 			}
 			callback(null, uid);
