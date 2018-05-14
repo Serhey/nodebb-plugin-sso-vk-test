@@ -3,7 +3,7 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">Vkontakte Social Authentication</div>
 			<div class="panel-body">
-				<form role="form" class="sso-vk-test-settings">
+				<form role="form" class="sso-vkontakte-settings">
 					<p>
 						Register a new <strong>Vkontakte Application</strong> via 
 						<a href="http://vk.com/dev">Application Development</a>
@@ -37,13 +37,13 @@
 
 <script>
 	require(['settings'], function(Settings) {
-		Settings.load('sso-vk-test-test', $('.sso-vkontakte-test-settings'));
+		Settings.load('sso-vkontakte', $('.sso-vkontakte-settings'));
 
 		$('#save').on('click', function() {
-			Settings.save('sso-vk-test-test', $('.sso-vkontakte-test-settings'), function() {
+			Settings.save('sso-vkontakte', $('.sso-vkontakte-settings'), function() {
 				app.alert({
 					type: 'success',
-					alert_id: 'sso-vk-test-saved',
+					alert_id: 'sso-vkontakte-saved',
 					title: 'Settings Saved',
 					message: 'Please reload your NodeBB to apply these settings',
 					clickfn: function() {
