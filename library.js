@@ -79,6 +79,13 @@
 		return setImmediate(callback, null, data);
 	};
 
+	Vkontakte.storeTokens = function(uid, accessToken, refreshToken) {
+		//JG: Actually save the useful stuff
+		winston.verbose("Storing received fb access information for uid(" + uid + ") accessToken(" + accessToken + ") refreshToken(" + refreshToken + ")");
+		user.setUserField(uid, 'vkontakteaccesstoken', accessToken);
+		user.setUserField(uid, 'vkontakterefreshtoken', refreshToken);
+	};
+
 	Vkontakte.login = function(vkontakteID, username, displayName, email, picture, callback) {
 		//console.log('our email!!!!!!');
 		//console.log(email);
@@ -104,6 +111,10 @@
 					db.setObjectField('vkontakteid:uid', vkontakteID, uid);
 					var autoConfirm = Vkontakte.settings && Vkontakte.settings.autoconfirm === "on" ? 1: 0;
 					User.setUserField(uid, 'email:confirmed', autoConfirm);
+
+					if (autoConfirm) {
+						db.sortedSetRemove('users:notvalidated', uid);
+					}
 
 					// Save their photo, if present
 					if (picture) {
