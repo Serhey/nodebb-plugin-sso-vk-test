@@ -2,49 +2,49 @@
   "_args": [
     [
       {
-        "raw": "nodebb-plugin-sso-vk-test@2.2.1",
+        "raw": "nodebb-plugin-sso-vk-test@2.2.2",
         "scope": null,
         "escapedName": "nodebb-plugin-sso-vk-test",
         "name": "nodebb-plugin-sso-vk-test",
-        "rawSpec": "2.2.1",
-        "spec": "2.2.1",
+        "rawSpec": "2.2.2",
+        "spec": "2.2.2",
         "type": "version"
       },
       "/home/user/nodebb"
     ],
     [
       {
-        "raw": "nodebb-plugin-sso-vk-test@2.2.1",
+        "raw": "nodebb-plugin-sso-vk-test@2.2.2",
         "scope": null,
         "escapedName": "nodebb-plugin-sso-vk-test",
         "name": "nodebb-plugin-sso-vk-test",
-        "rawSpec": "2.2.1",
-        "spec": "2.2.1",
+        "rawSpec": "2.2.2",
+        "spec": "2.2.2",
         "type": "version"
       },
       "/home/user/nodebb"
     ],
     [
       {
-        "raw": "nodebb-plugin-sso-vk-test@2.2.1",
+        "raw": "nodebb-plugin-sso-vk-test@2.2.2",
         "scope": null,
         "escapedName": "nodebb-plugin-sso-vk-test",
         "name": "nodebb-plugin-sso-vk-test",
-        "rawSpec": "2.2.1",
-        "spec": "2.2.1",
+        "rawSpec": "2.2.2",
+        "spec": "2.2.2",
         "type": "version"
       },
       "/home/user/nodebb"
     ]
   ],
-  "_from": "nodebb-plugin-sso-vk-test@2.2.1",
-  "_id": "nodebb-plugin-sso-vk-test@2.2.1",
+  "_from": "nodebb-plugin-sso-vk-test@2.2.2",
+  "_id": "nodebb-plugin-sso-vk-test@2.2.2",
   "_inCache": true,
   "_location": "/nodebb-plugin-sso-vk-test",
   "_nodeVersion": "6.11.1",
   "_npmOperationalInternal": {
     "host": "s3://npm-registry-packages",
-    "tmp": "tmp/nodebb-plugin-sso-vk-test_2.2.1_1525349502946_0.5222190175034078"
+    "tmp": "tmp/nodebb-plugin-sso-vk-test_2.2.2_1525349502946_0.5222190175034078"
   },
   "_npmUser": {
     "name": "dreadfull",
@@ -57,21 +57,21 @@
     "uid2": "0.0.3"
   },
   "_requested": {
-    "raw": "nodebb-plugin-sso-vk-test@2.2.1",
+    "raw": "nodebb-plugin-sso-vk-test@2.2.2",
     "scope": null,
     "escapedName": "nodebb-plugin-sso-vk-test",
     "name": "nodebb-plugin-sso-vk-test",
-    "rawSpec": "2.2.1",
-    "spec": "2.2.1",
+    "rawSpec": "2.2.2",
+    "spec": "2.2.2",
     "type": "version"
   },
   "_requiredBy": [
     "#USER"
   ],
-  "_resolved": "https://registry.npmjs.org/nodebb-plugin-sso-vk-test/-/nodebb-plugin-sso-vk-test-2.2.1.tgz",
+  "_resolved": "https://registry.npmjs.org/nodebb-plugin-sso-vk-test/-/nodebb-plugin-sso-vk-test-2.2.2.tgz",
   "_shasum": "741fdaed3bae8468f8535cf67ae9257fd28bb664",
   "_shrinkwrap": null,
-  "_spec": "nodebb-plugin-sso-vk-test@2.2.1",
+  "_spec": "nodebb-plugin-sso-vk-test@2.2.2",
   "_where": "/home/user/nodebb",
   "author": {
     "name": "dreadfull",
@@ -88,7 +88,7 @@
   "directories": {},
   "dist": {
     "shasum": "741fdaed3bae8468f8535cf67ae9257fd28bb664",
-    "tarball": "https://registry.npmjs.org/nodebb-plugin-sso-vk-test/-/nodebb-plugin-sso-vk-test-2.2.1.tgz",
+    "tarball": "https://registry.npmjs.org/nodebb-plugin-sso-vk-test/-/nodebb-plugin-sso-vk-test-2.2.2.tgz",
     "fileCount": 8,
     "unpackedSize": 11893,
     "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJa6vx/CRA9TVsSAnZWagAA0dIQAJAr7R+fKG8B2VxbZfCI\nD1EefUkrOQaOoBlLxUWiYJ9xO79Qa7xFw0fFSfBebAsa1uQSuiEw2ev2mKzk\n9Cf3DTfv4cxxqMl5cpf2XM5wLyJ+N7pehSky9+6h17SEm1C/nEXSd++evP7a\nnAtCY7J8HfAZ6GU+vfdRG5KvzCNT3n8iM3719aCbqb2qjxWwztUEBv4iMNfp\nQj28RIKXf/Ar5u5l5tnp80+ZqWT3nEbcwIKZtB/Wt6KYwBj4fzHZ7wvr59j/\n8iegAcG2/bvnR0bYiNHtKy2dYkGQcBoYCvcOZ37GmD9SeQ5hH4mX4NwC7hQI\n31KeLgSJrYfP6k3hVtE9cCatj7fImEpAGRUaKsTqRlY4sHun2oUk/MnvYSWW\njNC8Uo5ZLyoU30JWYOQ9aLtcjw1f63iKK2GPaEDgij2Lefdbq7MsGJJBF5z4\nP3jothegBs/eZUxatdS6VxyfkKgSoYoqNOUN196bGsyWpbvd4ED9NRiZIwB1\niCch0wXy3UHgFmscDh3iQDkBLk60ooihwhRC6zu+xGi5dvGuJZOawIb+yzgb\ntBLysKepK1JjNpW9WT2p4666ndgIJyyT+mlUsJNe0UwuAQOnoz3uldEqUcQd\nPklvUIP/eaEJDJ4tXqhIZkOOI2y/B7TsSPT6S+ZAJFDjonypmCROecx+xozk\nDM59\r\n=6/C5\r\n-----END PGP SIGNATURE-----\r\n"
@@ -121,5 +121,5 @@
     "url": "git+https://github.com/Serhey/nodebb-plugin-sso-vk-test.git"
   },
   "scripts": {},
-  "version": "2.2.1"
+  "version": "2.2.2"
 }
