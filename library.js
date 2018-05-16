@@ -8,7 +8,10 @@
 		passport = module.parent.require('passport'),
 		passportVK = require('passport-vkontakte').Strategy,
 		nconf = module.parent.require('nconf'),
-        async = module.parent.require('async');
+        async = module.parent.require('async'),
+		winston = module.parent.require('winston');
+
+	var authenticationController = module.parent.require('./controllers/authentication');
 
 	var constants = Object.freeze({
 		'name': "Vkontakte",
@@ -69,6 +72,11 @@
 
 			callback(null, strategies);
 		});
+	};
+
+	Vkontakte.appendUserHashWhitelist = function (data, callback) {
+		data.whitelist.push('vkontakteid');//death remember
+		return setImmediate(callback, null, data);
 	};
 
 	Vkontakte.login = function(vkontakteID, username, displayName, email, picture, callback) {
