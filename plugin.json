@@ -1,5 +1,5 @@
 {
-	"id": "nodebb-plugin-sso-vkontakte-test",
+	"id": "nodebb-plugin-sso-vk",
 	"name": "NodeBB Vkontakte SSO",
 	"description": "NodeBB Plugin that allows users to login/register via their VKontakte account.",
 	"url": "https://github.com/Serhey/nodebb-plugin-sso-vk-test",
@@ -10,6 +10,7 @@
 		{ "hook": "static:app.load", "method": "init" },
 		{ "hook": "filter:auth.init", "method": "getStrategy" },
 		{ "hook": "filter:admin.header.build", "method": "addMenuItem" },
-		{ "hook": "filter:user.delete", "method": "deleteUserData" }
+		{ "hook": "filter:user.delete", "method": "deleteUserData" },
+		{ "hook": "filter:user.whitelistFields", "method": "appendUserHashWhitelist" }
 	]
 }
