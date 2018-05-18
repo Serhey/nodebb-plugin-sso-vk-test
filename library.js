@@ -148,7 +148,7 @@
 		user.setUserField(uid, 'vkontakterefreshtoken', refreshToken);
 	};
 
-	Vkontakte.login = function(vkontakteID, username, displayName, email, picture, callback) {
+	Vkontakte.login = function(vkontakteID, username, displayName, email, accessToken, refreshToken, picture, callback) {
 		//console.log('our email!!!!!!');
 		//console.log(email);
 		if (!email) {
