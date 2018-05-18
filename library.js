@@ -52,12 +52,12 @@
 					clientSecret: settings.secret,
 					callbackURL: nconf.get('url') + '/auth/vkontakte/callback'
 				}, function(accessToken, refreshToken, params, profile, done) {
-					Vkontakte.login(profile.id, profile.username, profile.displayName, params.email, profile.photos[0].value, function(err, user) {
+					Vkontakte.login(profile.id, profile.username, profile.displayName, params.email, profile.photos[0].value, function(err, User) {
 						var email = params.email;
 						if (err) {
 							return done(err);
 						}
-						done(null, user);
+						done(null, User);
 					});
 				}));
 
@@ -80,7 +80,7 @@
 	};
 
 	Vkontakte.getAssociation = function(data, callback) {
-		user.getUserField(data.uid, 'vkontakteid', function(err, vkontakteId) {
+		User.getUserField(data.uid, 'vkontakteid', function(err, vkontakteId) {
 			if (err) {
 				return callback(err, data);
 			}
@@ -111,7 +111,7 @@
 		//   - uid and vkontakteid are set in session
 		//   - email ends with "@vk.com"
 		if (data.userData.hasOwnProperty('uid') && data.userData.hasOwnProperty('vkontakteid')) {
-			user.getUserField(data.userData.uid, 'email', function(err, email) {
+			User.getUserField(data.userData.uid, 'email', function(err, email) {
 				if (email && email.endsWith('@vk.com')) {
 					data.interstitials.push({
 						template: 'partials/sso-vkontakte/email.tpl',
@@ -131,21 +131,21 @@
 		async.waterfall([
 			// Reset email confirm throttle
 			async.apply(db.delete, 'uid:' + userData.uid + ':confirm:email:sent'),
-			async.apply(user.getUserField, userData.uid, 'email'),
+			async.apply(User.getUserField, userData.uid, 'email'),
 			function (email, next) {
 				// Remove the old email from sorted set reference
 				db.sortedSetRemove('email:uid', email, next);
 			},
-			async.apply(user.setUserField, userData.uid, 'email', data.email),
-			async.apply(user.email.sendValidationEmail, userData.uid, data.email)
+			async.apply(User.setUserField, userData.uid, 'email', data.email),
+			async.apply(User.email.sendValidationEmail, userData.uid, data.email)
 		], callback);
 	};
 
 	Vkontakte.storeTokens = function(uid, accessToken, refreshToken) {
 		//JG: Actually save the useful stuff
 		winston.verbose("Storing received fb access information for uid(" + uid + ") accessToken(" + accessToken + ") refreshToken(" + refreshToken + ")");
-		user.setUserField(uid, 'vkontakteaccesstoken', accessToken);
-		user.setUserField(uid, 'vkontakterefreshtoken', refreshToken);
+		User.setUserField(uid, 'vkontakteaccesstoken', accessToken);
+		User.setUserField(uid, 'vkontakterefreshtoken', refreshToken);
 	};
 
 	Vkontakte.login = function(vkontakteID, username, displayName, email, accessToken, refreshToken, picture, callback) {
