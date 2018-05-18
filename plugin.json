@@ -6,11 +6,12 @@
 	"library": "./library.js",
 	"templates": "templates",
 	"hooks": [
-		{ "hook": "static:app.preload", "method": "preinit" },
 		{ "hook": "static:app.load", "method": "init" },
 		{ "hook": "filter:auth.init", "method": "getStrategy" },
+		{ "hook": "filter:auth.list", "method": "getAssociation" },
 		{ "hook": "filter:admin.header.build", "method": "addMenuItem" },
-		{ "hook": "filter:user.delete", "method": "deleteUserData" },
+		{ "hook": "static:user.delete", "method": "deleteUserData" },
+		{ "hook": "filter:register.interstitial", "method": "prepareInterstitial" },
 		{ "hook": "filter:user.whitelistFields", "method": "appendUserHashWhitelist" }
 	]
 }
