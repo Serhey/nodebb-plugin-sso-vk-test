@@ -8,7 +8,7 @@
 		passport = module.parent.require('passport'),
 		passportVK = require('passport-vkontakte').Strategy,
 		nconf = module.parent.require('nconf'),
-        async = module.parent.require('async'),
+		async = module.parent.require('async'),
 		winston = module.parent.require('winston');
 
 	var authenticationController = module.parent.require('./controllers/authentication');
@@ -79,6 +79,68 @@
 		return setImmediate(callback, null, data);
 	};
 
+	Vkontakte.getAssociation = function(data, callback) {
+		user.getUserField(data.uid, 'vkontakteid', function(err, vkontakteId) {
+			if (err) {
+				return callback(err, data);
+			}
+
+			if (vkontakteId) {
+				data.associations.push({
+					associated: true,
+					url: 'https://vk.com/' + vkontakteId,
+					deauthUrl: nconf.get('url') + '/deauth/vkontakte',
+					name: constants.name,
+					icon: constants.admin.icon
+				});
+			} else {
+				data.associations.push({
+					associated: false,
+					url: nconf.get('url') + '/auth/vkontakte',
+					name: constants.name,
+					icon: constants.admin.icon
+				});
+			}
+
+			callback(null, data);
+		})
+	};
+
+	Vkontakte.prepareInterstitial = function(data, callback) {
+		// Only execute if:
+		//   - uid and vkontakteid are set in session
+		//   - email ends with "@vk.com"
+		if (data.userData.hasOwnProperty('uid') && data.userData.hasOwnProperty('vkontakteid')) {
+			user.getUserField(data.userData.uid, 'email', function(err, email) {
+				if (email && email.endsWith('@vk.com')) {
+					data.interstitials.push({
+						template: 'partials/sso-vkontakte/email.tpl',
+						data: {},
+						callback: Vkontakte.storeAdditionalData
+					});
+				}
+
+				callback(null, data);
+			});
+		} else {
+			callback(null, data);
+		}
+	};
+
+	Vkontakte.storeAdditionalData = function(userData, data, callback) {
+		async.waterfall([
+			// Reset email confirm throttle
+			async.apply(db.delete, 'uid:' + userData.uid + ':confirm:email:sent'),
+			async.apply(user.getUserField, userData.uid, 'email'),
+			function (email, next) {
+				// Remove the old email from sorted set reference
+				db.sortedSetRemove('email:uid', email, next);
+			},
+			async.apply(user.setUserField, userData.uid, 'email', data.email),
+			async.apply(user.email.sendValidationEmail, userData.uid, data.email)
+		], callback);
+	};
+
 	Vkontakte.storeTokens = function(uid, accessToken, refreshToken) {
 		//JG: Actually save the useful stuff
 		winston.verbose("Storing received fb access information for uid(" + uid + ") accessToken(" + accessToken + ") refreshToken(" + refreshToken + ")");
@@ -100,6 +162,8 @@
 
 			if (uid !== null) {
 				// Existing User
+
+				Vkontakte.storeTokens(uid, accessToken, refreshToken);
 				callback(null, {
 					uid: uid
 				});
@@ -122,6 +186,7 @@
 						User.setUserField(uid, 'picture', picture);
 					}
 
+					Vkontakte.storeTokens(uid, accessToken, refreshToken);
 					callback(null, {
 						uid: uid
 					});
@@ -148,10 +213,10 @@
 		});
 	};
 
-	Vkontakte.getUidByvkontakteID = function(vkontakteID, callback) {
-		db.getObjectField('vkontakteid:uid', vkontakteID, function(err, uid) {
+	Vkontakte.getUidByvkontakteID = function(vkontakteid, callback) {
+		db.getObjectField('vkontakteid:uid', vkontakteid, function(err, uid) {
 			if (err) {
-				callback(err);
+				return callback(err);
 			} else {
 				callback(null, uid);
 			}
@@ -173,7 +238,10 @@
 			async.apply(User.getUserField, uid, 'vkontakteid'),
 			function(oAuthIdToDelete, next) {
 				db.deleteObjectField('vkontakteid:uid', oAuthIdToDelete, next);
-			}
+			},
+			function (next) {
+				db.deleteObjectField('user:' + uid, 'vkontakteid', next);
+			},
 		], function(err) {
 			if (err) {
 				winston.error('[sso-vkontakte] Could not remove OAuthId data for uid ' + uid + '. Error: ' + err);
