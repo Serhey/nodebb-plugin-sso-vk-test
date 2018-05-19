@@ -164,7 +164,7 @@
 				// Existing User
 
 				Vkontakte.storeTokens(uid, accessToken, refreshToken);
-				callback(null, {
+				return callback(null, {
 					uid: uid
 				});
 			} else {
@@ -218,7 +218,7 @@
 			if (err) {
 				return callback(err);
 			} else {
-				callback(null, uid);
+				return callback(null, uid);
 			}
 		});
 	};
