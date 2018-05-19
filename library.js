@@ -155,62 +155,15 @@
 			email = username + '@users.noreply.vkontakte.com';
 		}
 
-		Vkontakte.getUidByvkontakteID(vkontakteID, function(err, uid) {
+			Vkontakte.getUidByvkontakteID = function(vkontakteID, callback) {
+			db.getObjectField('vkontakteid:uid', vkontakteID, function(err, uid) {
 			if (err) {
-				return callback(err);
-			}
-
-			if (uid !== null) {
-				// Existing User
-
-				Vkontakte.storeTokens(uid, accessToken, refreshToken);
-				return callback(null, {
-					uid: uid
-				});
+				callback(err);
 			} else {
-				// New User
-				var success = function(uid) {
-					// Save vkontakte-specific information to the user
-					User.setUserField(uid, 'vkontakteid', vkontakteID);
-					db.setObjectField('vkontakteid:uid', vkontakteID, uid);
-					var autoConfirm = Vkontakte.settings && Vkontakte.settings.autoconfirm === "on" ? 1: 0;
-					User.setUserField(uid, 'email:confirmed', autoConfirm);
-
-					if (autoConfirm) {
-						db.sortedSetRemove('users:notvalidated', uid);
-					}
-
-					// Save their photo, if present
-					if (picture) {
-						User.setUserField(uid, 'uploadedpicture', picture);
-						User.setUserField(uid, 'picture', picture);
-					}
-
-					Vkontakte.storeTokens(uid, accessToken, refreshToken);
-					callback(null, {
-						uid: uid
-					});
-				};
-
-				User.getUidByEmail(email, function(err, uid) {
-					if(err) {
-						return callback(err);
-					}
-
-					if (!uid) {
-						User.create({username: displayName, email: email}, function(err, uid) {
-							if(err) {
-								return callback(err);
-							}
-
-							success(uid);
-						});
-					} else {
-						success(uid); // Existing account -- merge
-					}
-				});
+				callback(null, uid);
 			}
 		});
+		};
 	};
 
 	Vkontakte.getUidByvkontakteID = function(vkontakteid, callback) {
