@@ -216,14 +216,23 @@
 		//console.log('our email!!!!!!');
 		//console.log(email);
 		if (!email) {
-			email = username + '@users.noreply.vkontakte.com';
+			email = username + '@vk.com';
 		}
+
+if (uid !== null) {
+				// Existing User
+				Facebook.storeTokens(uid, accessToken, refreshToken);
+
+				callback(null, {
+					uid: uid
+				});
 
 			Vkontakte.getUidByvkontakteID = function(vkontakteID, callback) {
 			db.getObjectField('vkontakteid:uid', vkontakteID, function(err, uid) {
 			if (err) {
 				callback(err);
 			} else {
+				Facebook.storeTokens(uid, accessToken, refreshToken);
 				callback(null, uid);
 			}
 		});
