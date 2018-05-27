@@ -1,5 +1,5 @@
 {
-	"id": "nodebb-plugin-sso-vk",
+	"id": "nodebb-plugin-sso-vk-test",
 	"name": "NodeBB Vkontakte SSO",
 	"description": "NodeBB Plugin that allows users to login/register via their VKontakte account.",
 	"url": "https://github.com/Serhey/nodebb-plugin-sso-vk-test",
