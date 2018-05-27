@@ -205,13 +205,6 @@
 		], callback);
 	};
 
-	Vkontakte.storeTokens = function(uid, accessToken, refreshToken) {
-		//JG: Actually save the useful stuff
-		winston.verbose("Storing received fb access information for uid(" + uid + ") accessToken(" + accessToken + ") refreshToken(" + refreshToken + ")");
-		User.setUserField(uid, 'vkontakteaccesstoken', accessToken);
-		User.setUserField(uid, 'vkontakterefreshtoken', refreshToken);
-	};
-
 	Vkontakte.login = function(vkontakteID, username, displayName, email, accessToken, refreshToken, picture, callback) {
 		//console.log('our email!!!!!!');
 		//console.log(email);
@@ -219,20 +212,13 @@
 			email = username + '@vk.com';
 		}
 
-if (uid !== null) {
-				// Existing User
-				Facebook.storeTokens(uid, accessToken, refreshToken);
-
-				callback(null, {
-					uid: uid
-				});
 
 			Vkontakte.getUidByvkontakteID = function(vkontakteID, callback) {
 			db.getObjectField('vkontakteid:uid', vkontakteID, function(err, uid) {
 			if (err) {
 				callback(err);
 			} else {
-				Facebook.storeTokens(uid, accessToken, refreshToken);
+
 				callback(null, uid);
 			}
 		});
