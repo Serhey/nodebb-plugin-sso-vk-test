@@ -25,21 +25,31 @@
 		settings: undefined
 	};
 
-	Vkontakte.preinit = function(data, callback) {
-		// Settings
-		meta.settings.get('sso-vkontakte', function(err, settings) {
-			Vkontakte.settings = settings;
-			callback(null, data);
-		});
-	};
-
-	Vkontakte.init = function(data, callback) {
-		function render(req, res, next) {
+	Vkontakte.init = function(params, callback) {
+		var hostHelpers = require.main.require('./src/routes/helpers');
+		function render(req, res) {
 			res.render('admin/plugins/sso-vkontakte', {});
 		}
 
-		data.router.get('/admin/plugins/sso-vkontakte', data.middleware.admin.buildHeader, render);
-		data.router.get('/api/admin/plugins/sso-vkontakte', render);
+		params.router.get('/admin/plugins/sso-vkontakte', params.middleware.admin.buildHeader, render);
+		params.router.get('/api/admin/plugins/sso-vkontakte', render);
+
+		hostHelpers.setupPageRoute(params.router, '/deauth/vkontakte', params.middleware, [params.middleware.requireUser], function (req, res) {
+			res.render('plugins/sso-vkontakte/deauth', {
+				service: "Vkontakte",
+			});
+		});
+		params.router.post('/deauth/vkontakte', [params.middleware.requireUser, params.middleware.applyCSRF], function (req, res, next) {
+			Vkontakte.deleteUserData({
+				uid: req.user.uid,
+			}, function (err) {
+				if (err) {
+					return next(err);
+				}
+
+				res.redirect(nconf.get('relative_path') + '/me/edit');
+			});
+		});
 
 		callback();
 	};
