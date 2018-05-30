@@ -6,7 +6,7 @@
 		meta = module.parent.require('./meta'),
 		db = module.parent.require('../src/database'),
 		passport = module.parent.require('passport'),
-		passportVK = require('passport-local').Strategy,
+		passportVK = require('passport-vkontakte').Strategy,
 		nconf = module.parent.require('nconf'),
 		async = module.parent.require('async'),
 		winston = module.parent.require('winston');
@@ -55,7 +55,7 @@
 
 				strategies.push({
 					name: 'vkontakte',
-					url: '/auth/vkontakte',
+					url: '/auth/vk',
 					callbackURL: '/auth/vk/callback',
 					icon: constants.admin.icon,
 					scope: 'user:email'
