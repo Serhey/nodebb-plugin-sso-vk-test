@@ -6,7 +6,7 @@
 		meta = module.parent.require('./meta'),
 		db = module.parent.require('../src/database'),
 		passport = module.parent.require('passport'),
-		passportVK = require('passport-vkontakte').Strategy,
+		passportVK = require('passport-local').Strategy,
 		nconf = module.parent.require('nconf'),
 		async = module.parent.require('async'),
 		winston = module.parent.require('winston');
@@ -21,8 +21,49 @@
 		}
 	});
 
-	var Vkontakte = {
-		settings: undefined
+	var Vkontakte = {};
+
+	Vkontakte.getStrategy = function(strategies, callback) {
+		meta.settings.get('sso-vkontakte', function(err, settings) {
+			Vkontakte.settings = settings;
+
+			if (!err && settings.id && settings.secret) {
+				passport.use(new passportVK({
+					clientID: settings.id,
+					clientSecret: settings.secret,
+					callbackURL: nconf.get('url') + '/auth/vk/callback',
+					passReqToCallback: true,
+					scope: [ 'user:email' ] // fetches non-public emails as well
+				}, function(req, token, tokenSecret, params, profile, done) {
+					if (req.hasOwnProperty('user') && req.user.hasOwnProperty('uid') && req.user.uid > 0) {
+						// Save Vkontakte -specific information to the user
+						User.setUserField(req.user.uid, 'vkontakteid', profile.id);
+						db.setObjectField('vkontakteid:uid', profile.id, req.user.uid);
+						return done(null, req.user);
+					}
+
+					var email = Array.isArray(params.emails) && params.emails.length ? params.emails[0].value : '';
+					Vkontakte.login(profile.id, profile.username, email, profile._json.avatar_url, function(err, user) {
+						if (err) {
+							return done(err);
+						}
+
+						authenticationController.onSuccessfulLogin(req, user.uid);
+						done(null, user);
+					});
+				}));
+
+				strategies.push({
+					name: 'vkontakte',
+					url: '/auth/vkontakte',
+					callbackURL: '/auth/vk/callback',
+					icon: constants.admin.icon,
+					scope: 'user:email'
+				});
+			}
+
+			callback(null, strategies);
+		});
 	};
 
 	Vkontakte.init = function(params, callback) {
@@ -39,7 +80,7 @@
 				service: "Vkontakte",
 			});
 		});
-		params.router.post('/deauth/vkontakte', [params.middleware.requireUser, params.middleware.applyCSRF], function (req, res, next) {
+		params.router.post('/deauth/vk', [params.middleware.requireUser, params.middleware.applyCSRF], function (req, res, next) {
 			Vkontakte.deleteUserData({
 				uid: req.user.uid,
 			}, function (err) {
@@ -54,89 +95,7 @@
 		callback();
 	};
 
-	Vkontakte.getSettings = function(callback) {
-		if (Vkontakte.settings) {
-			return callback();
-		}
 
-		meta.settings.get('sso-vkontakte', function(err, settings) {
-			Vkontakte.settings = settings;
-			callback();
-		});
-	};
-
-	Vkontakte.getStrategy = function(strategies, callback) {
-		if (!Vkontakte.settings) {
-			return Vkontakte.getSettings(function() {
-				Vkontakte.getStrategy(strategies, callback);
-			});
-		}
-
-		if (
-			Vkontakte.settings !== undefined
-			&& Vkontakte.settings.hasOwnProperty('app_id') && Vkontakte.settings.app_id
-			&& Vkontakte.settings.hasOwnProperty('secret') && Vkontakte.settings.secret
-		) {
-			passport.use(new passportVK({
-				clientID: Vkontakte.settings.app_id,
-				clientSecret: Vkontakte.settings.secret,
-				callbackURL: nconf.get('url') + '/auth/vkontakte/callback',
-				passReqToCallback: true,
-				profileFields: ['id', 'emails', 'name', 'displayName']
-			}, function(req, accessToken, refreshToken, profile, done) {
-				if (req.hasOwnProperty('user') && req.user.hasOwnProperty('uid') && req.user.uid > 0) {
-					// User is already logged-in, associate fb account with uid if account does not have an existing association
-					User.getUserField(req.user.uid, 'vkontakteid', function (err, fbid) {
-						if (err) {
-							return done(err);
-						}
-
-						if (!vkontakteid || profile.id === vkontakteid) {
-							User.setUserField(req.user.uid, 'vkontakteid', profile.id);
-							db.setObjectField('vkontakteid:uid', profile.id, req.user.uid);
-							done(null, req.user);
-						} else {
-							done(new Error('[[error:sso-multiple-association]]'));
-						}
-					});
-				} else {
-					var email;
-					if (profile._json.hasOwnProperty('email')) {
-						email = profile._json.email;
-					} else {
-						email = (profile.username ? profile.username : profile.id) + '@vk.com';
-					}
-
-					Vkontakte.login(profile.id, profile.displayName, email, accessToken, refreshToken, profile, function(err, user) {
-						if (err) {
-							return done(err);
-						}
-
-						// Require collection of email
-						if (email.endsWith('@vk.com')) {
-							req.session.registration = req.session.registration || {};
-							req.session.registration.uid = user.uid;
-							req.session.registration.vkontakteid = profile.id;
-						}
-
-						authenticationController.onSuccessfulLogin(req, user.uid, function (err) {
-							done(err, !err ? user : null);
-						});
-					});
-				}
-			}));
-
-			strategies.push({
-				name: 'vkontakte',
-				url: '/auth/vkontakte',
-				callbackURL: '/auth/vkontakte/callback',
-				icon: constants.admin.icon,
-				scope: 'public_profile, email'
-			});
-		}
-
-		callback(null, strategies);
-	};
 
 	Vkontakte.appendUserHashWhitelist = function (data, callback) {
 		data.whitelist.push('vkontakteid');//death remember
@@ -144,23 +103,23 @@
 	};
 
 	Vkontakte.getAssociation = function(data, callback) {
-		User.getUserField(data.uid, 'vkontakteid', function(err, vkontakteId) {
+		User.getUserField(data.uid, 'vkontakteid', function(err, vkontakteID) {
 			if (err) {
 				return callback(err, data);
 			}
 
-			if (vkontakteId) {
+			if (vkontakteID) {
 				data.associations.push({
 					associated: true,
-					url: 'https://vk.com/' + vkontakteId,
-					deauthUrl: nconf.get('url') + '/deauth/vkontakte',
+					//url: 'https://vk.com/' + vkontakteId,
+					deauthUrl: nconf.get('url') + '/deauth/vk',
 					name: constants.name,
 					icon: constants.admin.icon
 				});
 			} else {
 				data.associations.push({
 					associated: false,
-					url: nconf.get('url') + '/auth/vkontakte',
+					url: nconf.get('url') + '/auth/vk',
 					name: constants.name,
 					icon: constants.admin.icon
 				});
@@ -170,58 +129,37 @@
 		})
 	};
 
-	Vkontakte.prepareInterstitial = function(data, callback) {
-		// Only execute if:
-		//   - uid and vkontakteid are set in session
-		//   - email ends with "@vk.com"
-		if (data.userData.hasOwnProperty('uid') && data.userData.hasOwnProperty('vkontakteid')) {
-			User.getUserField(data.userData.uid, 'email', function(err, email) {
-				if (email && email.endsWith('@vk.com')) {
-					data.interstitials.push({
-						template: 'partials/sso-vkontakte/email.tpl',
-						data: {},
-						callback: Vkontakte.storeAdditionalData
-					});
-				}
-
-				callback(null, data);
-			});
-		} else {
-			callback(null, data);
-		}
-	};
-
-	Vkontakte.storeAdditionalData = function(userData, data, callback) {
-		async.waterfall([
-			// Reset email confirm throttle
-			async.apply(db.delete, 'uid:' + userData.uid + ':confirm:email:sent'),
-			async.apply(User.getUserField, userData.uid, 'email'),
-			function (email, next) {
-				// Remove the old email from sorted set reference
-				db.sortedSetRemove('email:uid', email, next);
-			},
-			async.apply(User.setUserField, userData.uid, 'email', data.email),
-			async.apply(User.email.sendValidationEmail, userData.uid, data.email)
-		], callback);
-	};
-
 	Vkontakte.login = function(vkontakteID, username, displayName, email, accessToken, refreshToken, picture, callback) {
-		//console.log('our email!!!!!!');
-		//console.log(email);
+
 		if (!email) {
 			email = username + '@vk.com';
 		}
 
 
-			Vkontakte.getUidByvkontakteID = function(vkontakteID, callback) {
+		Vkontakte.getUidByvkontakteID = function(vkontakteID, callback) {
 			db.getObjectField('vkontakteid:uid', vkontakteID, function(err, uid) {
-			if (err) {
-				callback(err);
-			} else {
+				if (err) {
+					callback(err);
+				} else {
+					// New User
+					var success = function(uid) {
+						// trust vk's email
+						User.setUserField(uid, 'email:confirmed', 1);
+						db.sortedSetRemove('users:notvalidated', uid);
 
-				callback(null, uid);
-			}
-		});
+						User.setUserField(uid, 'vkontakteid', vkontakteID);
+
+						// set profile picture
+						User.setUserField(uid, 'uploadedpicture', avatar_url);
+						User.setUserField(uid, 'picture', avatar_url);
+
+						db.setObjectField('vkontakteid:uid', vkontakteID, uid);
+						callback(null, {
+							uid: uid
+						});
+					};
+				}
+			});
 		};
 	};
 
@@ -237,9 +175,9 @@
 
 	Vkontakte.addMenuItem = function(custom_header, callback) {
 		custom_header.authentication.push({
-			"route": constants.admin.route,
-			"icon": constants.admin.icon,
-			"name": constants.name
+			'route': constants.admin.route,
+			'icon': constants.admin.icon,
+			'name': constants.name
 		});
 
 		callback(null, custom_header);
